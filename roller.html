@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>D&D Character Generator</title>
+		<link rel="icon" href="data:,">
+	</head>
+	<body>
+		<div id="methodMenu">
+			<label for="method">Choose roll method:</label>
+			<select name="method" id="method">
+				<option value="3d6">3d6 down the line</option>
+				<option value="4d6">4d6 drop lowest down the line</option>
+				<option value="4d6any">4d6 drop lowest, choose where each goes</option>
+			</select>
+		</div> <br />
+		<div id="name"></div> <br />
+		<div id="astr"></div>
+		<div id="aint"></div>
+		<div id="awis"></div>
+		<div id="adex"></div>
+		<div id="acon"></div>
+		<div id="acha"></div>
+		<div id="avgs"></div>
+		<div id="avgm"></div> <br />
+		<div id="bg"></div> <br />
+		<div id="inv"></div>
+		<button onclick="generateCharacter()">Give Me A Character!</button>
+		<script src="roller.js"></script>
+	</body>
+</html>
