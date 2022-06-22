@@ -1,77 +1,5 @@
-// DICE FUNCTIONS
-
-function roll3d6() {
-	return rollDice(3, 6);
-}
-
-function roll4d6dl() {
-	let rolls = [];
-	for(let i = 0; i < 4; i++) {
-		rolls.push(rollDice(1, 6));
-	}
-
-	let lowest = rolls[0];
-	let lowestIdx = 0;
-	for(let i = 0; i < rolls.length; i++) {
-		if(rolls[i] < lowest) {
-			lowest = rolls[i];
-			lowestIdx = i;
-		}
-	}
-	rolls.splice(lowestIdx, 1);
-	let total = 0;
-	for(let i = 0; i < rolls.length; i++) {
-		total += rolls[i];
-	}
-	return total;
-
-}
-
-function rollDice(count, sides) {
-	let total = 0;
-	for(let i = 0; i < count; i++) {
-		total += Math.floor(1 + Math.random() * sides);
-	}
-	return total;
-}
-
-// UTILITY FUNCTIONS
-
-function getRandomFromArray(arr) {
-	return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function getAverage(arr) {
-	sum = 0.0;
-	for(let i = 0; i < arr.length; i++) {
-		sum += arr[i];
-	}
-	return sum / arr.length;
-}
-
-function getModifier(score) {
-	if(score == 18) {
-		return 3;
-	} else if(score >= 16) {
-		return +2;
-	} else if(score >= 13) {
-		return +1;
-	} else if(score >= 9) {
-		return 0;
-	} else if(score >= 6) {
-		return -1;
-	} else if(score >= 4) {
-		return -2;
-	} else if(score == 3) {
-		return -3;
-	} else {
-		console.error(`Invalid score! ${score}`);
-	}
-}
-
-function getModifierString(mod) {
-	return mod > 0 ? "+" + mod : "" + mod;
-}
+import {getRandomFromArray} from './utility.js';
+import {rollDice} from './dice.js';
 
 // GENERATORS
 
@@ -1203,27 +1131,6 @@ function randName() {
 }
 
 function randNoble() {
-	/*
-	let nobleLottery = rollDice(1, 20);
-	if(nobleLottery == 20) {
-		return "king";
-	} else if(nobleLottery == 19) {
-		return "arch duke" // /"arch prince"
-	} else if(nobleLottery == 18) {
-		return "duke"
-	} else if(nobleLottery == 17) {
-		return "marquis" // "margrave"
-	} else if(nobleLottery == 16) {
-		return "count"
-	} else if(nobleLottery >= 11) {
-		return "baron" // "landgraf"
-	} else if(nobleLottery >= 7) {
-		return "knight"
-	} else if(nobleLottery >= 4) {
-		return "knight banneret"
-	} else {
-		return "landless knight"
-	}*/
 	const nobles = [
 		"king",
 		"arch duke",
@@ -1808,99 +1715,8 @@ function randOtherService() {
 	}
 }
 
-
-function generateBackground() {
-	const birthValues = [ "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth" ];
-	let birth = birthValues[Math.floor(Math.random() * birthValues.length)];
-	let parentOccupation = randParentOccupation();
-
-	document.getElementById('bg').innerHTML = `You are the <b>${birth}</b> child of a <b>${parentOccupation}</b>.  During your childhood...<br />`
-
-	let upbringing = [];
-	let upbringingCount = Math.floor(Math.random() * 4) + 1
-	for(let i = 0; i < upbringingCount; i++) {
-		upbringing.push(randUpbringing());
-	}
-	for(let i = 0; i < upbringing.length; i++) {
-		document.getElementById('bg').innerHTML += `...<b>${upbringing[i]}</b>. <br />`
-	}
-
-	let adulthood = [];
-	let adulthoodCount = Math.floor(Math.random() * 4) + 1
-	for(let i = 0; i < adulthoodCount; i++) {
-		adulthood.push(randYoungAdulthood());
-	}
-	document.getElementById('bg').innerHTML += `During your adulthood...<br />`;
-	for(let i = 0; i < adulthood.length; i++) {
-	document.getElementById('bg').innerHTML += `...<b>${adulthood[i]}</b> <br />`;
-	}
-}
-
-function writeLabel(id, name, value) {
-	document.getElementById(id).innerHTML = `${name}: ${value}`;
-}
-
-function generateCharacter() {
-	let rollMethodSelector = document.getElementById("method");
-	let rollMethodChosen = rollMethodSelector.options[rollMethodSelector.selectedIndex].value;
-	let rollMethodFunc;
-	if(rollMethodChosen == "3d6") {
-		rollMethodFunc = roll3d6;
-	} else if(rollMethodChosen == "4d6") {
-		rollMethodFunc = roll4d6dl;
-	} else if(rollMethodChosen == "4d6any") {
-		rollMethodFunc = roll4d6dl;
-	} else {
-		console.error(`Error in getting roll method! ${rollMethodChosen}`);
-	}
-
-	let name = randName();
-	let stre = rollMethodFunc();
-	let inte = rollMethodFunc();
-	let wisd = rollMethodFunc();
-	let dext = rollMethodFunc();
-	let cons = rollMethodFunc();
-	let cha = rollMethodFunc();
-
-	let strem = getModifier(stre);
-	let intem = getModifier(inte);
-	let wisdm = getModifier(wisd);
-	let dextm = getModifier(dext);
-	let consm = getModifier(cons);
-	let cham = getModifier(cha);
-
-	let inv = randInventory();
-	let invString = "";
-	for(let i = 0; i < inv.length; i++) {
-		invString += inv[i] + "<br />";
-	}
-
-	if(rollMethodChosen == "4d6any") {
-		writeLabel('name', 'Name', name);
-		writeLabel('astr', 'Ability 1', stre + " " + getModifierString(strem));
-		writeLabel('aint', 'Ability 2', inte + " " + getModifierString(intem));
-		writeLabel('awis', 'Ability 3', wisd + " " + getModifierString(wisdm));
-		writeLabel('adex', 'Ability 4', dext + " " + getModifierString(dextm));
-		writeLabel('acon', 'Ability 5', cons + " " + getModifierString(consm));
-		writeLabel('acha', 'Ability 6', cha + " " + getModifierString(cham));
-		writeLabel('avgs', '(Average Score)', getAverage([stre, inte, wisd, dext, cons, cha]).toFixed(2));
-		writeLabel('inv', 'Inventory:', invString);
-	} else {
-		writeLabel('name', 'Name', name);
-		writeLabel('astr', 'Strength', stre + " " + getModifierString(strem));
-		writeLabel('aint', 'Intelligence', inte + " " + getModifierString(intem));
-		writeLabel('awis', 'Wisdom', wisd + " " + getModifierString(wisdm));
-		writeLabel('adex', 'Dexterity', dext + " " + getModifierString(dextm));
-		writeLabel('acon', 'Constitution', cons + " " + getModifierString(consm));
-		writeLabel('acha', 'Charisma', cha + " " + getModifierString(cham));
-		writeLabel('avgs', '(Average Score)', getAverage([stre, inte, wisd, dext, cons, cha]).toFixed(2));
-		writeLabel('inv', 'Inventory', invString);
-	}
-	//writeLabel('avgm', '(Average Modifier)', getAverage([c['astr'], c['aint'], c['awis'], c['adex'], c['acon'], c['acha']]).toFixed(2));
-	// TODO: avgm
-
-	// Flavor gen
-	generateBackground();
-}
-
-generateCharacter();
+export {randInventory, randName, randNoble, randClergy, randMerchant, 
+	randGovtOfficial, randSkilledWorker, randParentOccupation, randGuardian, 
+	randMilitaryService, randCrime, randReligiousExperience, randVice, 
+	randMagicalOccurance, randVirtue, randYoungAdulthood, randUpbringing, 
+	randRelative, randNoun, randOtherService};
